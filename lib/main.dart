@@ -225,7 +225,12 @@ Widget build(BuildContext context){
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
       itemCount: dummyOrders.length,
       itemBuilder: (context, index){
-        return OrderItem(order:dummyOrders[index]);
+        final order = dummyOrders[index];
+        return OrderItem(
+          order: order,
+          onDone: () => _updateStatus(index, 'done'),
+        onCancel: () => _updateStatus(index, 'cancelled'),
+        );
       },
     ),
   );
@@ -234,29 +239,71 @@ Widget build(BuildContext context){
 
 class OrderItem extends StatelessWidget {
   final Map<String, dynamic> order;
+  final VoidCallback onDone;
+  final VoidCallback onCancel;
 
-  const OrderItem({super.key, required this.order});
+  const OrderItem({super.key,
+  required this.order,
+  required this.onDone,
+  required this.onCancel
+  });
 
   @override
   Widget build(BuildContext context){
+    final String status = order ['status'] as String;
+    final bool isPending = status == 'pending';
+
     return Padding(padding: const EdgeInsetsGeometry.only(bottom: 20),
     child: Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        //gambar makanan
         ClipRRect(
           borderRadius: BorderRadiusGeometry.circular(20),
           child: Image.network(order['imageUrl'] as String,
           width: 96,
           height: 96,
           fit: BoxFit.cover,
+          loadingBuilder: (context, child, loadingProgress) {
+            if (loadingProgress == null) return child;
+            return Container(
+              width: 96,
+              height: 96,
+              color: Colors.orange.shade50,
+              child: const Center(
+                child: SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: Colors.deepOrange,
+                  ),
+                ),
+              ),
+            );
+          },
+          errorBuilder: (context, error, stackTrace) => Container(
+              width: 96,
+              height: 96,
+              color: Colors.orange.shade50,
+              child: Icon(Icons.fastfood_rounded,
+              color: Colors.deepOrange.shade200),
+          ),
           ),
         ),
         const SizedBox(width: 12),
+
+        //detail pesanan
         Expanded(
           child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('#${order['category']}'),
+            Text('#${order['category']}',
+            style: GoogleFonts.poppins(
+              fontSize: 13,
+              color: Colors.deepOrange.shade300,
+            ),
+            ),
             Text(
               order['title'] as String,
               maxLines: 1,
@@ -264,17 +311,106 @@ class OrderItem extends StatelessWidget {
               style: GoogleFonts.poppins(
                 fontSize: 15,
                 fontWeight: FontWeight.bold,
+                color: Colors.blueGrey[900],
               ),
             ),
-            Text('ID:${order['id']}'),
-            Text('\$${order['price']}'),
-            
-          ],
+            Text('ID:${order['id']}',
+            style: GoogleFonts.poppins(
+              fontSize: 12,
+              color: Colors.grey[500],
+            ),
+            ),
+          const SizedBox(height: 6),
+                Row(
+                  children: [
+                    Expanded(
+                      child: FittedBox(fit: BoxFit.scaleDown,alignment: Alignment.centerLeft,
+                        child: Text(
+                          '\$${order['price']}',
+                          style: GoogleFonts.poppins(
+                            fontSize: 18,
+                        color: Colors.blueGrey[900],
+                          ),
+                        ),
+                      ),
+                    ),
+                    if (isPending) ...[
+                      _ActionButton(
+                        label: 'Done',
+                        filled: true,
+                     onPressed: onDone,
+                      ),
+                      const SizedBox(width: 6),
+                      _ActionButton(
+                        label: 'Cancel',
+                     filled: false,
+                        onPressed: onCancel,
+                      ),
+                    ] else
+                      Text(
+                        status == 'done' ? 'Done' : 'Cancelled',
+                        style: GoogleFonts.poppins(
+                      fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: status == 'done'
+                              ? Colors.green
+                              : Colors.red.shade400,
+                          ),
+                      ),
+                  ],
+                   ),
+                  ],
+             ),
+                ),
+         ],
+         ),
+      );
+    }
+}
+
+class _ActionButton extends StatelessWidget {
+  final String label;
+  final bool filled;
+  final VoidCallback onPressed;
+
+  const _ActionButton({
+    required this.label,
+    required this.filled,
+    required this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final shape = RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(10),
+    );
+    const padding = EdgeInsets.symmetric(horizontal: 10, vertical: 0);
+    const size = Size(0, 34);
+
+    if (filled) {
+      return ElevatedButton(
+        onPressed: onPressed,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.deepOrange,foregroundColor: Colors.white,
+          elevation: 0,
+          shape: shape,
+          padding: padding,
+          minimumSize: size,
         ),
-        ),
-      ],
-    ),
+        child: Text(label, style: GoogleFonts.poppins(fontSize: 13)),
+      );
+    }
+    return OutlinedButton(
+      onPressed: onPressed,
+      style: OutlinedButton.styleFrom(
+        foregroundColor: Colors.deepOrange.shade400,
+        side: BorderSide(color: Colors.deepOrange.shade300),
+        shape: shape,
+        padding: padding,
+        minimumSize: size,
+      ),
+      child: Text(label, style: GoogleFonts.poppins(fontSize: 13)),
     );
   }
-  }
+}
 
