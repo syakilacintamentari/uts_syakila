@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 void main() {
   runApp(const MyApp());
@@ -97,6 +98,60 @@ class OnboardingPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 24),
+
+              //judul
+              Text('All your favorite',
+              textAlign: TextAlign.center,
+              style:GoogleFonts.poppins(fontSize: 24.0,
+              fontWeight: FontWeight.bold,
+              color: Colors.blueGrey[900],
+              ),
+              ),
+              const SizedBox(height: 12),
+
+              //deskripsi
+              Text(
+                'Get all your loved foods in one once place, '
+                'you just place the one we do the rest',
+                textAlign: TextAlign.center,
+                style: GoogleFonts.poppins(
+                  fontSize: 14.0,
+                  fontWeight: FontWeight.normal,
+                  height: 1.5,
+                  color: Colors.blueGrey[400],
+                ),
+              ),
+
+              SizedBox(
+                width: double.infinity,
+                height: 56,
+                child: ElevatedButton(onPressed: (){},
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.deepOrange,
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadiusGeometry.circular(16),
+                  ),
+                ),
+                 child: Text("NEXT",
+                 style: GoogleFonts.poppins(
+                  fontSize: 15.0,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.2,
+                  color: Colors.white,
+              ),
+                 ),
+                ),
+              ),
+              const SizedBox(
+                height: 8
+              ),
+
+
+            //tautan skip
+             
+              
             ],
           ),
         ),
