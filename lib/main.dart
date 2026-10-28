@@ -26,6 +26,9 @@ class MyApp extends StatelessWidget {
 class OnboardingPage extends StatelessWidget {
   const OnboardingPage({super.key});
 
+  static const String _illustrationUrl = 'https://images.unsplash.com/photo-1504674900247-0877df9cc836'
+  '?auto=format&fit=crop&w=800&q=80';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,11 +52,51 @@ class OnboardingPage extends StatelessWidget {
           ),
           child: Column(
             children: [
+              //ilustrasi
               Expanded(
+                flex: 5,
                 child: Center(
-                  child: Text('Onboarding UI'),
+                  child: AspectRatio(aspectRatio: 1, child: Stack(
+                    alignment: AlignmentGeometry.center,
+                    children: [
+                      //lingkaran krem
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.orange.shade50,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                      Padding(padding: const EdgeInsetsGeometry.all(16),
+                      child: ClipOval(
+                        child: Image.network(_illustrationUrl,
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        height: double.infinity,
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return const Center(
+                            child: CircularProgressIndicator(
+                              color: Colors.deepOrange,
+                            ),
+                          );
+                        },
+                        errorBuilder: (context, error, stackTrace) {
+                          return Center(
+                            child: Icon(Icons.fastfood_rounded,
+                            size: 96,
+                            color: Colors.deepOrange.shade300,
+                            ),
+                          );
+                        },
+                        ),
+                      ),
+                      ), 
+                    ],
+                  ),
+                  ),
                 ),
               ),
+              const SizedBox(height: 24),
             ],
           ),
         ),
