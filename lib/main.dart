@@ -100,7 +100,7 @@ class OnboardingPage extends StatelessWidget {
               const SizedBox(height: 24),
 
               //judul
-              Text('All your favorite',
+              Text('All your favorites',
               textAlign: TextAlign.center,
               style:GoogleFonts.poppins(fontSize: 24.0,
               fontWeight: FontWeight.bold,
@@ -221,11 +221,60 @@ Widget build(BuildContext context){
       ),
       ),
     ),
-    body: Center(
-      child: Text("Total Pesanan: ${dummyOrders.length}"),
+    body: ListView.builder(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+      itemCount: dummyOrders.length,
+      itemBuilder: (context, index){
+        return OrderItem(order:dummyOrders[index]);
+      },
     ),
   );
 }
-
 }
+
+class OrderItem extends StatelessWidget {
+  final Map<String, dynamic> order;
+
+  const OrderItem({super.key, required this.order});
+
+  @override
+  Widget build(BuildContext context){
+    return Padding(padding: const EdgeInsetsGeometry.only(bottom: 20),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadiusGeometry.circular(20),
+          child: Image.network(order['imageUrl'] as String,
+          width: 96,
+          height: 96,
+          fit: BoxFit.cover,
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('#${order['category']}'),
+            Text(
+              order['title'] as String,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: GoogleFonts.poppins(
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Text('ID:${order['id']}'),
+            Text('\$${order['price']}'),
+            
+          ],
+        ),
+        ),
+      ],
+    ),
+    );
+  }
+  }
 
